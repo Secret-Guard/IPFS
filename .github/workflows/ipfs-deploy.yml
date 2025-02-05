@@ -1,0 +1,30 @@
+name: Deploy to IPFS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install IPFS CLI
+        run: |
+          curl -s https://get.ipfs.io | bash
+          export PATH=$PATH:$HOME/go-ipfs
+
+      - name: Initialize IPFS
+        run: ipfs init
+
+      - name: Add files to IPFS
+        run: ipfs add -r .
+
+      - name: Pin to Pinata
+        uses: pinata-cloud/pinata-ipfs-action@v1
+        with:
+          key: ${{ secrets.PINATA_API_KEY }}
+          secret: ''
